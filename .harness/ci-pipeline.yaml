@@ -52,7 +52,16 @@ pipeline:
                       SMTP_SOURCE_NAME=<+secrets.getValue("SMTP_SOURCE_NAME")>
                       EOF
 
-                      docker build -t gh-commit-audit:latest .
+                      # Check if the image exists locally
+                      if [[ "$(docker images -q gh-commit-audit:latest 2> /dev/null)" == "" ]]; then
+                        echo "[INFO] Image not found. Building..."
+                        docker build -t gh-commit-audit:latest .
+                      else
+                        echo "[INFO] Image gh-commit-audit:latest already exists. Skipping build."
+                      fi
+
+                      # Run the container
+                      echo "[INFO] Starting container..."
                       docker run --rm --env-file .env --name gh-cmt-audit gh-commit-audit:latest
         delegateSelectors:
           - linux-amd64
