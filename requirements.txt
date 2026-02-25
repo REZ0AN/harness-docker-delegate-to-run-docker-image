@@ -1,0 +1,6 @@
+asyncio
+aiohttp
+pandas
+numpy
+datetime
+python-dateutil

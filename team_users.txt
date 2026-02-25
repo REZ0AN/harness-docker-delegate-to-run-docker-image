@@ -1,0 +1,4 @@
+FCC_Core=ojeytonwilliams raisedadead moT01 Bouncey
+FCC_Curriculum=ilenia-magoni ShaunSHamilton huyenltnguyen
+FCC_Infra=camperbot SaintPeter ltegman
+

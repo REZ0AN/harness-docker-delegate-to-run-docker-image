@@ -1,0 +1,96 @@
+pipeline:
+  name: ci-pipeline
+  identifier: ci_pipeline
+  projectIdentifier: github_commit_audit
+  orgIdentifier: default
+  tags: {}
+  properties:
+    ci:
+      codebase:
+        connectorRef: harness_ci_poc_github_connector
+        build: <+input>
+  stages:
+    - stage:
+        name: Run Github Commit Audit Scripts
+        identifier: run_github_commit_audit_scripts
+        type: CI
+        spec:
+          cloneCodebase: true
+          platform:
+            os: Linux
+            arch: Amd64
+          runtime:
+            type: Docker
+            spec: {}
+          execution:
+            steps:
+              - step:
+                  type: Run
+                  name: Build and Run Docker Container for github-commit-audit 
+                  identifier: build_run_docker_container_github_commit_audit
+                  spec:
+                    shell: Sh
+                    command: |-
+                      echo "[INFO] Populating .env file"
+                      cat > .env << 'EOF'
+                      ORG_NAME=<+pipeline.variables.ORG_NAME>
+                      MONTH_START=<+pipeline.variables.MONTH_START>
+                      MONTH_END=<+pipeline.variables.MONTH_END>
+                      IS_PERIOD=<+pipeline.variables.IS_PERIOD>
+                      PERIOD=<+pipeline.variables.PERIOD>
+                      GH_PAT=<+secrets.getValue("GH_PAT")>
+                      APPLICATION_NAME=<+pipeline.variables.APPLICATION_NAME>
+                      SEND_EMAIL=<+pipeline.variables.SEND_EMAIL>
+                      EMAIL_RECIPIENTS_FILE=<+secrets.getValue("EMAIL_RECIPIENTS_FILE")>
+                      EMAIL_SUBJECT=<+pipeline.variables.EMAIL_SUBJECT>
+                      SEND_MODE=<+secrets.getValue("SEND_MODE")>
+                      SMTP_HOST=<+secrets.getValue("SMTP_HOST")>
+                      SMTP_PORT=<+secrets.getValue("SMTP_PORT")>
+                      SMTP_USER=<+secrets.getValue("SMTP_USER")>
+                      SMTP_PASSWORD=<+secrets.getValue("SMTP_PASSWORD")>
+                      SMTP_FROM=<+secrets.getValue("SMTP_FROM")>
+                      SMTP_SOURCE_NAME=<+secrets.getValue("SMTP_SOURCE_NAME")>
+                      EOF
+
+                      # echo "[INFO] Populating email recipients file"
+
+                      docker build -t gh-commit-audit:latest .
+                      docker run --rm --env-file .env --name gh-cmt-audit gh-commit-audit:latest
+
+        delegateSelectors:
+          - linux-amd64
+          - linux
+          - x86_64
+  variables:
+    - name: ORG_NAME
+      type: String
+      required: true
+      value: <+input>
+    - name: MONTH_START
+      type: String
+      required: true
+      value: <+input>
+    - name: MONTH_END
+      type: String
+      required: true
+      value: <+input>
+    - name: IS_PERIOD
+      type: String
+      required: true
+      value: <+input>
+    - name: PERIOD
+      type: String
+      required: true
+      value: <+input>
+    - name: APPLICATION_NAME
+      type: String
+      required: true
+      value: <+input>
+    - name: SEND_EMAIL
+      type: String
+      required: true
+      value: <+input>
+    - name: EMAIL_SUBJECT
+      type: String
+      required: true
+      value: <+input>
