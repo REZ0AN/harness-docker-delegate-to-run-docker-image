@@ -7,7 +7,7 @@ pipeline:
   properties:
     ci:
       codebase:
-        connectorRef: harness_ci_poc_github_connector
+        connectorRef: GithubCommitAudit
         build: <+input>
   stages:
     - stage:
@@ -26,7 +26,7 @@ pipeline:
             steps:
               - step:
                   type: Run
-                  name: Build and Run Docker Container for github-commit-audit 
+                  name: Build and Run Docker Container for github-commit-audit
                   identifier: build_run_docker_container_github_commit_audit
                   spec:
                     shell: Sh
@@ -56,7 +56,6 @@ pipeline:
 
                       docker build -t gh-commit-audit:latest .
                       docker run --rm --env-file .env --name gh-cmt-audit gh-commit-audit:latest
-
         delegateSelectors:
           - linux-amd64
           - linux
