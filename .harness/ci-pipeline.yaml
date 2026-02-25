@@ -52,7 +52,8 @@ pipeline:
                       SMTP_SOURCE_NAME=<+secrets.getValue("SMTP_SOURCE_NAME")>
                       EOF
 
-                      # echo "[INFO] Populating email recipients file"
+                      echo "[INFO] Populating email recipients file"
+                      echo <+pipeline.variables.EMAIL_EMAIL_RECIPIENTS> | tr ',' '\n' > <+secrets.getValue("EMAIL_RECIPIENTS_FILE")>
 
                       docker build -t gh-commit-audit:latest .
                       docker run --rm --env-file .env --name gh-cmt-audit gh-commit-audit:latest
@@ -90,6 +91,10 @@ pipeline:
       required: true
       value: <+input>
     - name: EMAIL_SUBJECT
+      type: String
+      required: true
+      value: <+input>
+    - name: EMAIL_EMAIL_RECIPIENTS
       type: String
       required: true
       value: <+input>
