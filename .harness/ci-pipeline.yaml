@@ -53,7 +53,7 @@ pipeline:
                       EOF
 
                       # Check if the image exists locally
-                      if [[ "$(docker images -q gh-commit-audit:latest 2> /dev/null)" == "" ]]; then
+                      if [ -z "$(docker images -q gh-commit-audit:latest 2> /dev/null)" ]; then
                         echo "[INFO] Image not found. Building..."
                         docker build -t gh-commit-audit:latest .
                       else
