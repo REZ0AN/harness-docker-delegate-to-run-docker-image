@@ -5,8 +5,6 @@ MSMTP_CONFIG="/etc/msmtprc"
 
 echo "[INFO] Configuring MSMTP..."
 
-# load env
-source .env
 
 # Check required variables
 if [ -z "$SMTP_USER" ] || [ -z "$SMTP_PASSWORD" ]; then
