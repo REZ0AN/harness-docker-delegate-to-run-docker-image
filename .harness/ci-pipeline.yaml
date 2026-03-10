@@ -44,7 +44,7 @@ pipeline:
                       GH_PAT=<+secrets.getValue("GH_PAT")>
                       APPLICATION_NAME=<+pipeline.variables.APPLICATION_NAME>
                       SEND_EMAIL=<+pipeline.variables.SEND_EMAIL>
-                      EMAIL_RECIPIENTS_FILE=./email_recipients.txt
+                      EMAIL_RECIPIENTS_FILE=./.email_recipients.txt
                       EMAIL_SUBJECT=<+pipeline.variables.EMAIL_SUBJECT>
                       SEND_MODE=<+secrets.getValue("SEND_MODE")>
                       SMTP_HOST=<+secrets.getValue("SMTP_HOST")>
@@ -56,12 +56,12 @@ pipeline:
                       EOF
 
                       echo "[INFO] Populating email_recipients.txt file"
-                      cat > ./email_recipients.txt << 'EOF'
+                      cat > ./.email_recipients.txt << 'EOF'
                         <+pipeline.variables.EMAIL_RECIPIENTS>
                         EOF
 
                       # Convert commas to newlines in-place
-                      sed -i 's/,/\n/g' ./email_recipients.txt
+                      sed -i 's/,/\n/g' ./.email_recipients.txt
                       # Check if the image exists locally
                       if [ -z "$(docker images -q gh-commit-audit:latest 2> /dev/null)" ]; then
                         echo "[INFO] Image not found. Building..."
