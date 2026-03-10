@@ -41,7 +41,7 @@ pipeline:
                       GH_PAT=<+secrets.getValue("GH_PAT")>
                       APPLICATION_NAME=<+pipeline.variables.APPLICATION_NAME>
                       SEND_EMAIL=<+pipeline.variables.SEND_EMAIL>
-                      EMAIL_RECIPIENTS_FILE=<+secrets.getValue("EMAIL_RECIPIENTS_FILE")>
+                      EMAIL_RECIPIENTS_FILE=./email_recipients.txt
                       EMAIL_SUBJECT=<+pipeline.variables.EMAIL_SUBJECT>
                       SEND_MODE=<+secrets.getValue("SEND_MODE")>
                       SMTP_HOST=<+secrets.getValue("SMTP_HOST")>
@@ -50,6 +50,12 @@ pipeline:
                       SMTP_PASSWORD=<+secrets.getValue("SMTP_PASSWORD")>
                       SMTP_FROM=<+secrets.getValue("SMTP_FROM")>
                       SMTP_SOURCE_NAME=<+secrets.getValue("SMTP_SOURCE_NAME")>
+                      EOF
+
+                      echo "[INFO] Populating email_recipients.txt file"
+
+                      cat <<EOF > ./email_recipients.txt
+                      $(echo "<+pipeline.variables.EMAIL_RECIPIENTS>" | tr ',' '\n')
                       EOF
 
                       # Check if the image exists locally
@@ -97,6 +103,10 @@ pipeline:
       required: true
       value: <+input>
     - name: EMAIL_SUBJECT
+      type: String
+      required: true
+      value: <+input>
+    - name: EMAIL_RECIPIENTS
       type: String
       required: true
       value: <+input>
