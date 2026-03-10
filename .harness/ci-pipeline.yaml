@@ -56,12 +56,12 @@ pipeline:
                       EOF
 
                       echo "[INFO] Populating email_recipients.txt file"
+                      RAW_RECIPIENTS='<+pipeline.variables.EMAIL_RECIPIENTS>'
                       cat > ./.email_recipients.txt << 'EOF'
-                        <+pipeline.variables.EMAIL_RECIPIENTS>
+                        $(echo "$RAW_RECIPIENTS" | tr ',' '\n')
                         EOF
 
-                      # Convert commas to newlines in-place
-                      sed -i 's/,/\n/g' ./.email_recipients.txt
+
                       # Check if the image exists locally
                       if [ -z "$(docker images -q gh-commit-audit:latest 2> /dev/null)" ]; then
                         echo "[INFO] Image not found. Building..."
@@ -95,7 +95,7 @@ pipeline:
     - name: IS_PERIOD
       type: String
       required: true
-      description: "Allowed values 0 or 1"
+      description: Allowed values 0 or 1
       allowedValues:
         - "0"
         - "1"
@@ -103,7 +103,7 @@ pipeline:
     - name: PERIOD
       type: String
       required: true
-      description: "Any positive integer number"
+      description: Any positive integer number
       value: <+input>
     - name: APPLICATION_NAME
       type: String
@@ -112,7 +112,7 @@ pipeline:
     - name: SEND_EMAIL
       type: String
       required: true
-      description: "Allowed values true or false"
+      description: Allowed values true or false
       allowedValues:
         - "true"
         - "false"
@@ -122,7 +122,7 @@ pipeline:
       required: true
       value: <+input>
     - name: EMAIL_RECIPIENTS
-      description: "Expected comma separated email addresses"
+      description: Expected comma separated email addresses
       type: String
       required: true
       value: <+input>
