@@ -22,7 +22,7 @@ log_warning() {
     echo -e "${YELLOW}[EMAIL WARNING]${NC} $1"
 }
 
-RECIPIENTS_FILE="${EMAIL_RECIPIENTS_FILE:-./email_recipients.txt}"
+RECIPIENTS_FILE="${EMAIL_RECIPIENTS_FILE:-./.email_recipients.txt}"
 AUDIT_DIR="${AUDIT_DIR:-./audits}"
 SUBJECT_PREFIX="${EMAIL_SUBJECT:-GitHub Audit Report}"
     
