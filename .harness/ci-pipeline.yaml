@@ -59,7 +59,7 @@ pipeline:
                       RAW_RECIPIENTS='<+pipeline.variables.EMAIL_RECIPIENTS>'
                       cat > ./.email_recipients.txt << 'EOF'
                         $(echo "$RAW_RECIPIENTS" | tr ',' '\n')
-                        EOF
+                      EOF
 
 
                       # Check if the image exists locally
