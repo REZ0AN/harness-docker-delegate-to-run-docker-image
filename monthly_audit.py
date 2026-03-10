@@ -131,13 +131,15 @@ async def audit_commits(session, config, users):
 
 # Save the DataFrame to a CSV file with custom text
 def save_csv_with_meta_info(dataframe, filename, meta_info):
-    # Open the file in write mode
     with open(filename, 'w') as f:
-        # Write the custom text first
+        # Write meta info
         f.write(meta_info)
-        
-        # Now write the DataFrame to the file
-        dataframe.to_csv(f, index=False)
+
+        # Check if dataframe has data
+        if dataframe.empty:
+            f.write("No Commit Found in Given Date Range\n")
+        else:
+            dataframe.to_csv(f, index=False)
 
 async def process_repository(session, repo, config, usernames):
     """Process a single repository asynchronously"""
