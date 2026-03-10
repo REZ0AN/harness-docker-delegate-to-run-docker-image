@@ -57,9 +57,7 @@ pipeline:
 
                       echo "[INFO] Populating email_recipients.txt file"
                       RAW_RECIPIENTS='<+pipeline.variables.EMAIL_RECIPIENTS>'
-                      cat > ./.email_recipients.txt << 'EOF'
-                        $(echo "$RAW_RECIPIENTS" | tr ',' '\n')
-                      EOF
+                      printf '%s' "$RAW_RECIPIENTS" | tr ',' '\n' > ./.email_recipients.txt
 
 
                       # Check if the image exists locally
