@@ -31,6 +31,9 @@ pipeline:
                   spec:
                     shell: Sh
                     command: |-
+
+                      trap 'rm -f .env email_recipients.txt' EXIT
+
                       echo "[INFO] Populating .env file"
                       cat > .env << 'EOF'
                       ORG_NAME=<+pipeline.variables.ORG_NAME>
@@ -54,9 +57,8 @@ pipeline:
 
                       echo "[INFO] Populating email_recipients.txt file"
 
-                      cat <<EOF > ./email_recipients.txt
-                      $(echo "<+pipeline.variables.EMAIL_RECIPIENTS>" | tr ',' '\n')
-                      EOF
+                      RAW_RECIPIENTS='<+pipeline.variables.EMAIL_RECIPIENTS>'
+                      printf '%s' "$RAW_RECIPIENTS" | tr ',' '\n' > ./email_recipients.txt
 
                       # Check if the image exists locally
                       if [ -z "$(docker images -q gh-commit-audit:latest 2> /dev/null)" ]; then
@@ -81,18 +83,25 @@ pipeline:
     - name: MONTH_START
       type: String
       required: true
+      description: "Expected format: YYYY-MM (e.g 2024-04)"
       value: <+input>
     - name: MONTH_END
       type: String
       required: true
+      description: "Expected format: YYYY-MM (e.g 2024-04)"
       value: <+input>
     - name: IS_PERIOD
       type: String
       required: true
+      description: "Allowed values 0 or 1"
+      allowedValues:
+        - "0"
+        - "1"
       value: <+input>
     - name: PERIOD
       type: String
       required: true
+      description: "Any positive integer number"
       value: <+input>
     - name: APPLICATION_NAME
       type: String
@@ -101,12 +110,17 @@ pipeline:
     - name: SEND_EMAIL
       type: String
       required: true
+      description: "Allowed values true or false"
+      allowedValues:
+        - "true"
+        - "false"
       value: <+input>
     - name: EMAIL_SUBJECT
       type: String
       required: true
       value: <+input>
     - name: EMAIL_RECIPIENTS
+      description: "Expected comma separated email addresses"
       type: String
       required: true
       value: <+input>
