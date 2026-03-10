@@ -56,10 +56,12 @@ pipeline:
                       EOF
 
                       echo "[INFO] Populating email_recipients.txt file"
+                      cat > ./email_recipients.txt << 'EOF'
+                        <+pipeline.variables.EMAIL_RECIPIENTS>
+                        EOF
 
-                      RAW_RECIPIENTS='<+pipeline.variables.EMAIL_RECIPIENTS>'
-                      printf '%s' "$RAW_RECIPIENTS" | tr ',' '\n' > ./email_recipients.txt
-
+                      # Convert commas to newlines in-place
+                      sed -i 's/,/\n/g' ./email_recipients.txt
                       # Check if the image exists locally
                       if [ -z "$(docker images -q gh-commit-audit:latest 2> /dev/null)" ]; then
                         echo "[INFO] Image not found. Building..."
